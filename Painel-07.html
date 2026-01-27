@@ -1,0 +1,375 @@
+<!DOCTYPE html>  <html lang="pt-br">  
+<head>  
+<meta charset="UTF-8">  
+<meta name="viewport" content="width=device-width, initial-scale=1.0">  
+<title>JessStrategy-Painel</title>  <style>  
+:root{  
+  --neon-blue:#0afcff;  
+  --bg:#05060a;  
+  --card:#0b0d12;  
+  --radius:18px;  
+  --btn-off:#333;  
+  --btn-on:#222;  
+}  
+body{  
+  margin:0;  
+  background:var(--bg);  
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto;  
+  overflow-x:hidden;  
+  color:#fff;  
+}  
+  
+/* ===================== FLUTUANTE ICON ===================== */  
+#floatingIcon{  
+  position:fixed;  
+  right:20px;  
+  bottom:20px;  
+  width:60px;  
+  height:60px;  
+  border-radius:50%;  
+  background:var(--neon-blue);  
+  color:#05060a;  
+  display:flex;  
+  justify-content:center;  
+  align-items:center;  
+  font-weight:bold;  
+  font-size:18px;  
+  cursor:pointer;  
+  z-index:9999;  
+  user-select:none;  
+  box-shadow:0 0 20px var(--neon-blue);  
+  transition:all 0.3s ease;  
+}  
+  
+/* ===================== APP ===================== */  
+#app{  
+  position:fixed;  
+  right:20px;  
+  bottom:100px;  
+  width:90%;  
+  max-width:360px;  
+  height:80%;  
+  max-height:680px;  
+  background:rgba(10,10,20,.95);  
+  backdrop-filter:blur(12px);  
+  border-radius:28px;  
+  display:none;  
+  flex-direction:column;  
+  overflow:hidden;  
+  box-shadow:0 0 40px rgba(10,10,40,.7);  
+  z-index:9998;  
+  cursor:default;  
+  transition:all 0.3s ease;  
+}  
+  
+/* ===================== HEADER ===================== */  
+.header{  
+  padding:14px;  
+  display:flex;  
+  justify-content:space-between;  
+  align-items:center;  
+  font-size:16px;  
+  font-weight:600;  
+  cursor:grab;  
+  color:var(--neon-blue);  
+  background:rgba(0,0,0,0.2);  
+}  
+.header span{  
+  cursor:pointer;  
+  margin-left:8px;  
+  font-size:18px;  
+}  
+  
+/* ===================== CONTENT ===================== */  
+.content{  
+  flex:1;  
+  overflow:auto;  
+  padding:12px;  
+}  
+  
+/* ===================== CARD ===================== */  
+.card{  
+  background:var(--card);  
+  padding:14px;  
+  border-radius:var(--radius);  
+  margin-bottom:12px;  
+  display:flex;  
+  justify-content:space-between;  
+  align-items:center;  
+  flex-direction:column;  
+  box-shadow:0 0 8px rgba(10,255,255,0.2);  
+}  
+.card .row{  
+  width:100%;  
+  display:flex;  
+  justify-content:space-between;  
+  align-items:center;  
+  margin-bottom:8px;  
+}  
+.title{font-size:15px; color:var(--neon-blue);}  
+.desc{font-size:11px;color:#888}  
+  
+/* ===================== BOTÕES ON/OFF ===================== */  
+.btn-onoff{  
+  padding:6px 12px;  
+  border-radius:12px;  
+  border:none;  
+  cursor:pointer;  
+  font-size:13px;  
+  font-weight:600;  
+  margin-left:4px;  
+  transition:.2s;  
+  color:#ccc;  
+  background:#222;  
+  box-shadow:0 0 6px rgba(10,255,255,0.4);  
+}  
+.btn-on.active{background:var(--neon-blue); color:#05060a;}  
+.btn-off.active{background:#f33; color:#fff;}  
+  
+/* ===================== RANGE ===================== */  
+input[type=range]{  
+  -webkit-appearance:none;  
+  width:100%;  
+  height:6px;  
+  border-radius:4px;  
+  background:#111;  
+  margin-top:4px;  
+}  
+input[type=range]::-webkit-slider-thumb{  
+  -webkit-appearance:none;  
+  width:20px;  
+  height:20px;  
+  border-radius:50%;  
+  background:var(--neon-blue);  
+  box-shadow:0 0 12px var(--neon-blue);  
+  cursor:pointer;  
+}  
+  
+/* ===================== NAV ===================== */  
+.nav{  
+  display:flex;  
+  background:#0c0e14;  
+}  
+.nav button{  
+  flex:1;  
+  padding:12px;  
+  background:none;  
+  border:none;  
+  color:#777;  
+}  
+.nav button.active{  
+  color:var(--neon-blue);  
+}  
+  
+/* ===================== CANVAS ESP ===================== */  
+#esp-canvas{  
+  position:fixed;  
+  top:0;  
+  left:0;  
+  width:100%;  
+  height:100%;  
+  pointer-events:none;  
+  z-index:1;  
+}  
+</style>  </head>  
+<body>  <!-- Ícone flutuante arrastável -->  <div id="floatingIcon">JS</div>  <!-- CANVAS ESP -->  <canvas id="esp-canvas"></canvas>
+
+<!-- PAINEL ANDROID -->  <div id="app">  
+  <div class="header">  
+    JessStrategy-Painel  
+    <div style="display:flex;gap:8px">  
+      <span onclick="minimizeApp()">—</span>  
+      <span onclick="closeApp()">✕</span>  
+    </div>  
+  </div>    <div class="content" id="tab0">  <!-- Ainboot -->  
+<div class="card">  
+  <div class="row">  
+    <div>  
+      <div class="title">Ainboot</div>  
+      <div class="desc">Aim Assist</div>  
+    </div>  
+    <div>  
+      <button id="btnAinbootOn" class="btn-on btn-onoff" onclick="toggleAinboot(true)">ON</button>  
+      <button id="btnAinbootOff" class="btn-off btn-onoff" onclick="toggleAinboot(false)">OFF</button>  
+    </div>  
+  </div>  
+</div>  
+
+<!-- Ainkill -->  
+<div class="card">  
+  <div class="row">  
+    <div>  
+      <div class="title">Ainkill</div>  
+      <div class="desc">Head Precision</div>  
+    </div>  
+    <div>  
+      <button id="btnAinkillOn" class="btn-on btn-onoff" onclick="toggleAinkill(true)">ON</button>  
+      <button id="btnAinkillOff" class="btn-off btn-onoff" onclick="toggleAinkill(false)">OFF</button>  
+    </div>  
+  </div>  
+</div>  
+
+<!-- Teleport -->  
+<div class="card">  
+  <div class="row">  
+    <div>  
+      <div class="title">Teleport</div>  
+      <div class="desc">Varredura + Teleport</div>  
+    </div>  
+    <div>  
+      <button id="btnTeleportOn" class="btn-on btn-onoff" onclick="toggleTeleport(true)">ON</button>  
+      <button id="btnTeleportOff" class="btn-off btn-onoff" onclick="toggleTeleport(false)">OFF</button>  
+    </div>  
+  </div>  
+</div>  
+
+<!-- Medick Kit Correndo -->  
+<div class="card">  
+  <div class="row">  
+    <div>  
+      <div class="title">Medick Kit Correndo</div>  
+      <div class="desc">Usa kit ao correr</div>  
+    </div>  
+    <div>  
+      <button id="btnMedickOn" class="btn-on btn-onoff" onclick="toggleMedick(true)">ON</button>  
+      <button id="btnMedickOff" class="btn-off btn-onoff" onclick="toggleMedick(false)">OFF</button>  
+    </div>  
+  </div>  
+</div>  
+
+<!-- Speed -->  
+<div class="card">  
+  <div class="row">  
+    <div>  
+      <div class="title">Speed</div>  
+      <div class="desc">Velocidade do player</div>  
+    </div>  
+    <strong id="speedVal" style="color:var(--neon-blue)">70%</strong>  
+  </div>  
+  <input type="range" min="0" max="100" value="70" oninput="setSpeed(this.value)">  
+</div>
+
+  </div>    <div class="nav">  
+    <button class="active" onclick="tab(0)">Main</button>  
+  </div>  
+</div>  <script>  
+const app=document.getElementById("app");  
+const floatingIcon=document.getElementById("floatingIcon");  
+const canvas = document.getElementById('esp-canvas');  
+const ctx = canvas.getContext('2d');  
+let player = {x:window.innerWidth/2, y:window.innerHeight-50};  
+let enemies = [{x:0.3,y:0.3},{x:0.7,y:0.5},{x:0.5,y:0.2}];  
+  
+function resize(){canvas.width=window.innerWidth; canvas.height=window.innerHeight;}  
+window.onresize=resize;  
+resize();  
+  
+/* ===============================  
+   ABRIR, MINIMIZAR, FECHAR  
+================================ */  
+floatingIcon.onclick=()=>{app.style.display="flex"; floatingIcon.style.opacity=0; setTimeout(()=>floatingIcon.style.display='none',300);}  
+function closeApp(){app.style.display="none"; floatingIcon.style.display="flex"; floatingIcon.style.opacity=1;}  
+function minimizeApp(){app.style.display="none"; floatingIcon.style.display="flex"; floatingIcon.style.opacity=1;}  
+  
+/* ===============================  
+   ARRASTAR APP  
+================================ */  
+let isDragging=false, offsetX=0, offsetY=0;  
+app.querySelector('.header').addEventListener('mousedown', e=>{  
+  isDragging=true;  
+  offsetX=e.clientX-app.offsetLeft;  
+  offsetY=e.clientY-app.offsetTop;  
+  app.style.cursor='grabbing';  
+});  
+document.addEventListener('mousemove', e=>{  
+  if(isDragging){  
+    app.style.left=(e.clientX-offsetX)+'px';  
+    app.style.top=(e.clientY-offsetY)+'px';  
+    app.style.right='auto';  
+    app.style.bottom='auto';  
+  }  
+});  
+document.addEventListener('mouseup', ()=>{isDragging=false; app.style.cursor='grab';});  
+  
+/* ===============================  
+   ARRASTAR ÍCONE FLUTUANTE  
+================================ */  
+let iconDragging=false, iconOffsetX=0, iconOffsetY=0;  
+floatingIcon.addEventListener('mousedown', e=>{  
+  iconDragging=true;  
+  iconOffsetX=e.clientX-floatingIcon.offsetLeft;  
+  iconOffsetY=e.clientY-floatingIcon.offsetTop;  
+});  
+document.addEventListener('mousemove', e=>{  
+  if(iconDragging){  
+    floatingIcon.style.left=(e.clientX-iconOffsetX)+'px';  
+    floatingIcon.style.top=(e.clientY-iconOffsetY)+'px';  
+    floatingIcon.style.right='auto';  
+    floatingIcon.style.bottom='auto';  
+  }  
+});  
+document.addEventListener('mouseup', ()=>iconDragging=false);  
+  
+/* ===============================  
+   ESTADOS  
+================================ */  
+let ainbootOn = true, ainkillOn = false, teleportOn = false, medickOn = false, speed = 70;  
+  
+function updateButtonStates(btnOn, btnOff, state){  
+  if(state){btnOn.classList.add("active"); btnOff.classList.remove("active");}  
+  else{btnOn.classList.remove("active"); btnOff.classList.add("active");}  
+}  
+  
+function toggleAinboot(val){ainbootOn=val; updateButtonStates(document.getElementById("btnAinbootOn"), document.getElementById("btnAinbootOff"), val);}  
+function toggleAinkill(val){ainkillOn=val; updateButtonStates(document.getElementById("btnAinkillOn"), document.getElementById("btnAinkillOff"), val);}  
+function toggleTeleport(val){teleportOn=val; updateButtonStates(document.getElementById("btnTeleportOn"), document.getElementById("btnTeleportOff"), val);}  
+function toggleMedick(val){medickOn=val; updateButtonStates(document.getElementById("btnMedickOn"), document.getElementById("btnMedickOff"), val);}  
+function setSpeed(val){speed=val; document.getElementById("speedVal").innerText=val+"%";}  
+  
+/* ===============================  
+   TABS  
+================================ */  
+function tab(i){  
+  document.querySelectorAll(".content").forEach((c,n)=>c.style.display=n===i?"block":"none");  
+  document.querySelectorAll(".nav button").forEach((b,n)=>b.classList.toggle("active",n===i));  
+}  
+  
+/* ===============================  
+   ESP LOOP  
+================================ */  
+let espOn=true;  
+function drawESP(){  
+  ctx.clearRect(0,0,canvas.width,canvas.height);  
+  if(espOn){  
+    enemies.forEach(enemy=>{  
+      const ex=enemy.x*canvas.width;  
+      const ey=enemy.y*canvas.height;  
+      ctx.strokeStyle=ainkillOn? "#ff33aa" : "#0afcff";  
+      ctx.lineWidth=1.5;  
+      ctx.shadowBlur=10;  
+      ctx.shadowColor=ainkillOn? "#ff33aa" : "#0afcff";  
+      ctx.strokeRect(ex-10,ey-10,20,20);  
+      ctx.beginPath();  
+      ctx.moveTo(canvas.width/2,0);  
+      ctx.lineTo(ex,ey);  
+      ctx.stroke();  
+    });  
+  }  
+  ctx.fillStyle=medickOn? "#0afcff" : "#0afcff";  
+  ctx.shadowBlur=10;  
+  ctx.beginPath();  
+  ctx.arc(player.x,player.y,6,0,Math.PI*2);  
+  ctx.fill();  
+  requestAnimationFrame(drawESP);  
+}  
+drawESP();  
+  
+/* ===============================  
+   INICIALIZAÇÃO ESTADOS DOS BOTÕES  
+================================ */  
+toggleAinboot(ainbootOn);  
+toggleAinkill(ainkillOn);  
+toggleTeleport(teleportOn);  
+toggleMedick(medickOn);  
+</script>  </body>  
+</html>  
